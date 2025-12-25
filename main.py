@@ -4,40 +4,33 @@ FastMCP quickstart example.
 Run from the repository root:
     uv run examples/snippets/servers/fastmcp_quickstart.py
 """
+from pathlib import Path
 
 from mcp.server.fastmcp import FastMCP
 
+NOTES_FOLDER = Path(__file__).parent / "output" / "notes"
+NOTES_FILE = NOTES_FOLDER / "notes.txt"
+
+def ensure_file():
+    """Ensure the notes file exists."""
+    NOTES_FOLDER.mkdir(parents=True, exist_ok=True)
+    if not NOTES_FILE.exists():
+        with open(NOTES_FILE, "w", encoding="utf-8") as f:
+            f.write("")
+
 # Create an MCP server
-mcp = FastMCP("Demo", json_response=True)
+mcp = FastMCP("AI Sticky Notes", json_response=True)
 
-
-# Add an addition tool
 @mcp.tool()
-def add(a: int, b: int) -> int:
-    """Add two numbers"""
-    return a + b
+def add_note(message:str) -> str:
+    """Append a new note to a sticky note file.
 
-
-# Add a dynamic greeting resource
-@mcp.resource("greeting://{name}")
-def get_greeting(name: str) -> str:
-    """Get a personalized greeting"""
-    return f"Hello, {name}!"
-
-
-# Add a prompt
-@mcp.prompt()
-def greet_user(name: str, style: str = "friendly") -> str:
-    """Generate a greeting prompt"""
-    styles = {
-        "friendly": "Please write a warm, friendly greeting",
-        "formal": "Please write a formal, professional greeting",
-        "casual": "Please write a casual, relaxed greeting",
-    }
-
-    return f"{styles.get(style, styles['friendly'])} for someone named {name}."
-
-
-# Run with streamable HTTP transport
-if __name__ == "__main__":
-    mcp.run(transport="streamable-http")
+    Args:
+        message (str): The message to add.
+    Returns:
+        str: Confirmation message that the note was saved.
+    """
+    ensure_file()
+    with open(NOTES_FILE, "a", encoding="utf-8") as f:
+        f.write(message + "\n")
+    return "Note added."
