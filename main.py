@@ -1,9 +1,19 @@
+import os
+
 from fastmcp import FastMCP
 from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
+from fastmcp.server.auth import BearerAuthProvider
 
 load_dotenv()
+
+auth = BearerAuthProvider(
+    jwks_uri=f"{os.getenv('STITCH_DOMAIN')}/.well-known/jwks.json",
+    issuer=os.getenv("STITCH_DOMAIN"),
+    algorithm="RS256",
+    audience=os.getenv("STITCH_PROJECT_ID")
+)
 
 mcp = FastMCP(name="Notes App")
 
