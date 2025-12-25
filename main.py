@@ -34,3 +34,41 @@ def add_note(message:str) -> str:
     with open(NOTES_FILE, "a", encoding="utf-8") as f:
         f.write(message + "\n")
     return "Note added."
+
+@mcp.tool()
+def read_notes() -> str:
+    """Read all sticky notes from the file.
+
+    Returns:
+        str: All notes concatenated into a single string.
+    """
+    ensure_file()
+    with open(NOTES_FILE, "r", encoding="utf-8") as f:
+        content = f.read().strip()
+    return content if content else "No notes found."
+
+@mcp.resource("notes://latest")
+def get_latest_note() -> str:
+    """Get the latest sticky note.
+
+    Returns:
+        str: The latest note or a message if no notes exist.
+    """
+    ensure_file()
+    with open(NOTES_FILE, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+    if lines:
+        return lines[-1].strip()
+    return "No notes found."
+
+@mcp.prompt()
+def notes_summary_prompt() -> str:
+    """Generate a prompt asking AI to summarize all sticky notes.
+
+    Returns:
+        str: A prompt string for summarizing notes.
+    """
+    notes = read_notes()
+    if not notes:
+        return "No notes found."
+    return f"Summarize the following sticky notes:\n{notes}"
