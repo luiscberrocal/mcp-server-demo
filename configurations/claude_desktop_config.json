@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "Demo": {
+      "command": "/home/luiscberrocal/.cargo/bin/uv",
+      "args": [
+        "run",
+        "--with",
+        "mcp[cli]",
+        "mcp",
+        "run",
+        "/home/luiscberrocal/PycharmProjects/mcp-server-demo/main.py"
+      ]
+    }
+  }
+}
