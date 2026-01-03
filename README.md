@@ -7,7 +7,15 @@ The server is designed to interact with Claude Desktop, providing a seamless exp
 This is based on :
 
 - [Youtube Video by Tech with Tim](https://youtu.be/-8k9lGpGQ6g?si=ZQqb2OfK7i7Sg4MQ).
-- [MCP Avanded Server Example](https://youtu.be/j5f2EQf5hkw?si=dkX2-3fVyAveyoyW)
+- [MCP Avanded Server Example](https://youtu.be/j5f2EQf5hkw?si=dkX2-3fVyAveyoyW) The code does not work.
+- [MCP Crash Course](https://youtu.be/5xqFjh56AwM?si=LPJGlTsD4ECGA0dO)
+  - [GitHub Repository](https://github.com/daveebbelaar/ai-cookbook/tree/main/mcp/crash-course)
+
+
+
+```shell
+ uv run mcp dev server.py   
+```
 
 
 
