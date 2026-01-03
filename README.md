@@ -4,7 +4,10 @@
 This repository contains a demo implementation of an MCP (Model Context Protocol) server using the MCP Python library. 
 The server is designed to interact with Claude Desktop, providing a seamless experience for users.
 
-This is based on [Youtube Video by Tech with Tim](https://youtu.be/-8k9lGpGQ6g?si=ZQqb2OfK7i7Sg4MQ).
+This is based on :
+
+- [Youtube Video by Tech with Tim](https://youtu.be/-8k9lGpGQ6g?si=ZQqb2OfK7i7Sg4MQ).
+- [MCP Avanded Server Example](https://youtu.be/j5f2EQf5hkw?si=dkX2-3fVyAveyoyW)
 
 
 
