@@ -1,74 +1,56 @@
-"""
-FastMCP quickstart example.
+import os
 
-Run from the repository root:
-    uv run examples/snippets/servers/fastmcp_quickstart.py
-"""
-from pathlib import Path
+from fastmcp import FastMCP
+from dotenv import load_dotenv
+from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware import Middleware
+from fastmcp.server.auth import BearerAuthProvider
 
-from mcp.server.fastmcp import FastMCP
+load_dotenv()
 
-NOTES_FOLDER = Path(__file__).parent / "output" / "notes"
-NOTES_FILE = NOTES_FOLDER / "notes.txt"
+auth = BearerAuthProvider(
+    jwks_uri=f"{os.getenv('STITCH_DOMAIN')}/.well-known/jwks.json",
+    issuer=os.getenv("STITCH_DOMAIN"),
+    algorithm="RS256",
+    audience=os.getenv("STITCH_PROJECT_ID")
+)
 
-def ensure_file():
-    """Ensure the notes file exists."""
-    NOTES_FOLDER.mkdir(parents=True, exist_ok=True)
-    if not NOTES_FILE.exists():
-        with open(NOTES_FILE, "w", encoding="utf-8") as f:
-            f.write("")
+mcp = FastMCP(name="Notes App")
 
-# Create an MCP server
-mcp = FastMCP("AI Sticky Notes", json_response=True)
 
 @mcp.tool()
-def add_note(message:str) -> str:
-    """Append a new note to a sticky note file.
+def get_user_notes(user_id: str) -> str:
+    """Get all notes for a specific user.
 
     Args:
-        message (str): The message to add.
-    Returns:
-        str: Confirmation message that the note was saved.
+        user_id (str): The ID of the user.
     """
-    ensure_file()
-    with open(NOTES_FILE, "a", encoding="utf-8") as f:
-        f.write(message + "\n")
-    return "Note added."
+    return f"No notes found for user {user_id}"
+
 
 @mcp.tool()
-def read_notes() -> str:
-    """Read all sticky notes from the file.
+def add_note(content: str, user_id: str) -> str:
+    """Add a note for a specific user.
 
-    Returns:
-        str: All notes concatenated into a single string.
+    Args:
+        content (str): The content of the note.
+        user_id (str): The ID of the user.
     """
-    ensure_file()
-    with open(NOTES_FILE, "r", encoding="utf-8") as f:
-        content = f.read().strip()
-    return content if content else "No notes found."
+    return f"Note added for user {user_id}: {content}"
 
-@mcp.resource("notes://latest")
-def get_latest_note() -> str:
-    """Get the latest sticky note.
 
-    Returns:
-        str: The latest note or a message if no notes exist.
-    """
-    ensure_file()
-    with open(NOTES_FILE, "r", encoding="utf-8") as f:
-        lines = f.readlines()
-    if lines:
-        return lines[-1].strip()
-    return "No notes found."
-
-@mcp.prompt()
-def notes_summary_prompt() -> str:
-    """Generate a prompt asking AI to summarize all sticky notes.
-
-    Returns:
-        str: A prompt string for summarizing notes.
-    """
-    notes = read_notes()
-    if not notes:
-        return "No notes found."
-    return f"Summarize the following sticky notes:\n{notes}"
+if __name__ == '__main__':
+    mcp.run(
+        transport="http",
+        host="127.0.0.1",
+        port=8000,
+        middleware=[
+            Middleware(
+                CORSMiddleware,
+                allow_origins=["*"],
+                allow_credentials=True,
+                allow_methods=["*"],
+                allow_headers=["*"],
+            )
+        ]
+    )
